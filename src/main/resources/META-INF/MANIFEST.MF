@@ -1,0 +1,5 @@
+anifest-Version: 1.0
+Built-By: ${user.name}
+Build-Jdk: ${java.version}
+Created-By: Apache Maven
+Main-Class: helloWorld
