@@ -16,12 +16,16 @@ public class floatBuffer {
 
     System.out.println("Before Flip");
 
+    //doesn't print anything as the position of the pointer is at the end of the buffer
+
     while (buffer.hasRemaining()){
       float f = buffer.get();
       System.out.println(f);
     }
 
     buffer.flip();
+    //flip is used to reset the position to 0
+    //it is used to flip buffer from writing to reading
 
     System.out.println("After Flip");
 
