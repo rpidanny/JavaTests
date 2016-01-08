@@ -21,7 +21,7 @@ public class SocketChannel {
       InetSocketAddress address = new InetSocketAddress(8080);
       ss.bind(address);
 
-      SelectionKey key = ssc.register(selector, SelectionKey.OP_ACCEPT);
+//      SelectionKey key = ssc.register(selector, SelectionKey.OP_ACCEPT);
 
     }catch (Exception e){
       System.out.println(e);
