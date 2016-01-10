@@ -23,33 +23,34 @@ public class NioSocket {
 
     }
 
-    public Selector getSelector(){
-        return this.selector;
-    }
     public static void main(String ... Args){
         NioSocket nios = new NioSocket();
+        nios.startServer();
+    }
+
+    public void startServer(){
         try {
-            nios.selector = Selector.open();
+            selector = Selector.open();
             ServerSocketChannel serverChannel = ServerSocketChannel.open();
             serverChannel.configureBlocking(false);
 
             serverChannel.socket().bind(new InetSocketAddress(8080));
-            serverChannel.register(nios.getSelector(), SelectionKey.OP_ACCEPT);
+            serverChannel.register(selector, SelectionKey.OP_ACCEPT);
             System.out.println("Server Started!! at port 8080" );
 
             while (true){
-                nios.getSelector().select();
+                selector.select();
 
-                Iterator keys = nios.getSelector().selectedKeys().iterator();
+                Iterator keys = selector.selectedKeys().iterator();
 
                 while (keys.hasNext()){
                     SelectionKey key = (SelectionKey)keys.next();
                     keys.remove();
 
                     if(!key.isAcceptable()){
-                        nios.accept(key,nios.getSelector());
+                        accept(key);
                     }else if (key.isReadable()){
-                        nios.read(key);
+                        read(key);
                     }else if (key.isWritable()){
 
                     }
@@ -62,7 +63,7 @@ public class NioSocket {
 
     }
 
-    public void accept(SelectionKey key, Selector selector)throws IOException{
+    public void accept(SelectionKey key)throws IOException{
         ServerSocketChannel serverChannel = (ServerSocketChannel)key.channel();
         java.nio.channels.SocketChannel channel = serverChannel.accept();
         channel.configureBlocking(false);
