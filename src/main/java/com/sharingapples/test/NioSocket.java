@@ -45,7 +45,15 @@ public class NioSocket {
         while (true){
             try {
                 Thread.sleep(5000);
-                System.out.println(nio.getDataMapper());
+                //System.out.println(nio.getDataMapper());
+
+                for(Map.Entry<SocketChannel, List> entry:nio.getDataMapper().entrySet()) {
+                    byte [] message = new String("Echo").getBytes();
+                    ByteBuffer buffer = ByteBuffer.wrap(message);
+                    //System.out.println("Key : "+entry.getKey().getClass().getName());
+                    //System.out.println("Key : "+entry.getValue().getClass().getName());
+                    entry.getKey().write(buffer);
+                }
             }catch (Exception e){
                 System.out.println("Error in delay of main thread!!");
             }
