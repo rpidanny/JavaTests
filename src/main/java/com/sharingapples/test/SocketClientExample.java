@@ -13,7 +13,7 @@ public class SocketClientExample {
     public void startClient()
             throws IOException, InterruptedException {
 
-        InetSocketAddress hostAddress = new InetSocketAddress("localhost", 8090);
+        InetSocketAddress hostAddress = new InetSocketAddress("localhost", 8080);
         SocketChannel client = SocketChannel.open(hostAddress);
 
         System.out.println("Client... started");
