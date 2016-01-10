@@ -7,26 +7,24 @@ import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.*;
 import java.nio.channels.SocketChannel;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by rpidanny on 1/10/16.
  */
 public class NioSocket {
-    private Map<SocketChannel,List> dataMapper = null;
+    private Map<SocketChannel,List> dataMapper;
     private Selector selector;
 
     public NioSocket(){
-
+        dataMapper = new HashMap<SocketChannel,List>();
     }
 
     public static void main(String ... Args){
+        final NioSocket nio = new NioSocket();
         Runnable server = new Runnable() {
             public void run() {
-                new NioSocket().startServer();
+                nio.startServer();
             }
         };
 
@@ -44,9 +42,18 @@ public class NioSocket {
         };
         new Thread(server).start();
         //new Thread(client, "client-A").start();
-
+        while (true){
+            try {
+                Thread.sleep(5000);
+                System.out.println(nio.getDataMapper());
+            }catch (Exception e){
+                System.out.println("Error in delay of main thread!!");
+            }
+        }
     }
-
+    public Map<SocketChannel,List> getDataMapper(){
+        return dataMapper;
+    }
     public void startServer(){
         try {
             this.selector = Selector.open();
@@ -101,7 +108,7 @@ public class NioSocket {
             byte [] message = new String("Welcome").getBytes();
             ByteBuffer buffer = ByteBuffer.wrap(message);
             channel.write(buffer);
-            //this.dataMapper.put(channel,new ArrayList());
+            this.dataMapper.put(channel,new ArrayList());
             channel.register(selector,SelectionKey.OP_READ);
         }catch (IOException e){
             System.out.println("Crashed here");
@@ -116,7 +123,7 @@ public class NioSocket {
         numRead = channel.read(buffer);
         System.out.print("Inside Read Function");
         if(numRead == -1){
-            //this.dataMapper.remove(channel);
+            this.dataMapper.remove(channel);
             Socket socket = channel.socket();
             SocketAddress remoteAddr = socket.getRemoteSocketAddress();
             System.out.println("Connection Closed by Client "+remoteAddr);
