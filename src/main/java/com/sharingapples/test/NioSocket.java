@@ -15,37 +15,27 @@ import java.util.*;
 public class NioSocket {
     private Map<SocketChannel,List> dataMapper;
     private Selector selector;
-
-    public NioSocket(){
+    private boolean debugFlag;
+    public NioSocket(boolean x){
         dataMapper = new HashMap<SocketChannel,List>();
+        debugFlag = x;
     }
 
     public static void main(String ... Args){
-        final NioSocket nio = new NioSocket();
+        final NioSocket nio = new NioSocket(false);
         Runnable server = new Runnable() {
             public void run() {
                 nio.startServer();
             }
         };
 
-        Runnable client = new Runnable() {
-            public void run() {
-                try {
-                    new SocketClientExample().startClient();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        };
         new Thread(server).start();
-        //new Thread(client, "client-A").start();
+
         while (true){
             try {
-                Thread.sleep(5000);
-                nio.broadcast("Ping!!/n");
+                Thread.sleep(1000);
+                nio.broadcast("Ping!!\n");
+                System.out.println("User Count is : "+nio.getUserCount());
             }catch (Exception e){
                 System.out.println("Error in delay of main thread!!");
             }
@@ -78,10 +68,12 @@ public class NioSocket {
                     keys.remove();
 
                     if(key.isAcceptable()){
-                        System.out.println("Accepted");
+                        if(debugFlag)
+                            System.out.println("Accepted");
                         this.accept(key);
                     }else if (key.isReadable()){
-                        System.out.println("Readable");
+                        if (debugFlag)
+                            System.out.println("Readable");
                         this.read(key);
                     }else if (key.isWritable()){
 
@@ -104,7 +96,8 @@ public class NioSocket {
             channel.configureBlocking(false);
             Socket socket = channel.socket();
             SocketAddress remoteAddr = socket.getRemoteSocketAddress();
-            System.out.println("Connected to "+remoteAddr);
+            if (debugFlag)
+                System.out.println("Connected to "+remoteAddr);
             byte [] message = new String("Welcome").getBytes();
             ByteBuffer buffer = ByteBuffer.wrap(message);
             channel.write(buffer);
@@ -121,12 +114,14 @@ public class NioSocket {
         ByteBuffer buffer = ByteBuffer.allocate(1024);
         int numRead =-1;
         numRead = channel.read(buffer);
-        System.out.print("Inside Read Function");
+        if (debugFlag)
+            System.out.print("Inside Read Function");
         if(numRead == -1){
             this.dataMapper.remove(channel);
             Socket socket = channel.socket();
             SocketAddress remoteAddr = socket.getRemoteSocketAddress();
-            System.out.println("Connection Closed by Client "+remoteAddr);
+            if (debugFlag)
+                System.out.println("Connection Closed by Client "+remoteAddr);
             channel.close();
             return;
 
@@ -149,5 +144,9 @@ public class NioSocket {
         }catch (IOException e){
             System.out.println(e);
         }
+    }
+
+    public int getUserCount(){
+        return dataMapper.size();
     }
 }
