@@ -28,14 +28,28 @@ public class NioSocket {
                 nio.startServer();
             }
         };
+        Runnable client = new Runnable() {
+            //@Override
+            public void run() {
+                try {
+                    new SocketClientExample().startClient();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
 
+            }
+        };
         new Thread(server).start();
+
 
         while (true){
             try {
                 Thread.sleep(1000);
                 //nio.broadcast("Ping!!\n");
                 //System.out.println("User Count is : "+nio.getUserCount());
+                new Thread(client, "client-A").start();
             }catch (Exception e){
                 System.out.println("Error in delay of main thread!!");
             }

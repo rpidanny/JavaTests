@@ -14,7 +14,8 @@ public class SocketClientExample {
             throws IOException, InterruptedException {
 
         InetSocketAddress hostAddress = new InetSocketAddress("localhost", 8080);
-        SocketChannel client = SocketChannel.open(hostAddress);
+        SocketChannel client = SocketChannel.open(hostAddress).bind(new InetSocketAddress((int)System.currentTimeMillis() % 1000));
+
 
         System.out.println("Client... started");
 
