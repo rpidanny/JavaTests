@@ -24,33 +24,55 @@ public class NioSocket {
     }
 
     public static void main(String ... Args){
-        NioSocket nios = new NioSocket();
-        nios.startServer();
+        Runnable server = new Runnable() {
+            public void run() {
+                new NioSocket().startServer();
+            }
+        };
+
+        Runnable client = new Runnable() {
+            public void run() {
+                try {
+                    new SocketClientExample().startClient();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        };
+        new Thread(server).start();
+        new Thread(client, "client-A").start();
+
     }
 
     public void startServer(){
         try {
-            selector = Selector.open();
+            this.selector = Selector.open();
             ServerSocketChannel serverChannel = ServerSocketChannel.open();
             serverChannel.configureBlocking(false);
 
             serverChannel.socket().bind(new InetSocketAddress(8080));
-            serverChannel.register(selector, SelectionKey.OP_ACCEPT);
+            serverChannel.register(this.selector, SelectionKey.OP_ACCEPT);
             System.out.println("Server Started!! at port 8080" );
 
             while (true){
-                selector.select();
+                this.selector.select();
 
-                Iterator keys = selector.selectedKeys().iterator();
+                Iterator keys = this.selector.selectedKeys().iterator();
 
                 while (keys.hasNext()){
                     SelectionKey key = (SelectionKey)keys.next();
+                    //System.out.println(key);
                     keys.remove();
 
                     if(!key.isAcceptable()){
-                        accept(key);
+                        System.out.println("Accepted");
+                        this.accept(key);
                     }else if (key.isReadable()){
-                        read(key);
+                        System.out.println("Readable");
+                        this.read(key);
                     }else if (key.isWritable()){
 
                     }
@@ -71,18 +93,18 @@ public class NioSocket {
         SocketAddress remoteAddr = socket.getRemoteSocketAddress();
         System.out.println("Connected to "+remoteAddr);
 
-        dataMapper.put(channel,new ArrayList());
+        this.dataMapper.put(channel,new ArrayList());
         channel.register(selector,SelectionKey.OP_READ);
     }
 
     public void read(SelectionKey key)throws IOException{
         SocketChannel channel = (SocketChannel) key.channel();
         ByteBuffer buffer = ByteBuffer.allocate(1024);
-        int numRead =1;
+        int numRead =-1;
         numRead = channel.read(buffer);
-
+        System.out.print("Inside Read Function");
         if(numRead == -1){
-            dataMapper.remove(channel);
+            this.dataMapper.remove(channel);
             Socket socket = channel.socket();
             SocketAddress remoteAddr = socket.getRemoteSocketAddress();
             System.out.println("Connection Closed by Client "+remoteAddr);
