@@ -23,11 +23,13 @@ public class NioSocket {
 
     public static void main(String ... Args){
         final NioSocket nio = new NioSocket(true);
+
         Runnable server = new Runnable() {
             public void run() {
                 nio.startServer();
             }
         };
+
         Runnable client = new Runnable() {
             //@Override
             public void run() {
@@ -42,14 +44,19 @@ public class NioSocket {
             }
         };
         new Thread(server).start();
-
+        try {
+            Thread.sleep(1000);
+            new Thread(client, "client-A").start();
+        }catch (Exception e){
+            System.out.println(e);
+        }
 
         while (true){
             try {
                 Thread.sleep(1000);
                 //nio.broadcast("Ping!!\n");
                 //System.out.println("User Count is : "+nio.getUserCount());
-                new Thread(client, "client-A").start();
+                //new Thread(client, "client-A").start();
             }catch (Exception e){
                 System.out.println("Error in delay of main thread!!");
             }

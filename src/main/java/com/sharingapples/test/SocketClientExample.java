@@ -9,12 +9,21 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 
 public class SocketClientExample {
+    private int port;
 
+    //public SocketClientExample(int port){
+    //    this.port = port;
+    //}
     public void startClient()
             throws IOException, InterruptedException {
 
         InetSocketAddress hostAddress = new InetSocketAddress("localhost", 8080);
-        SocketChannel client = SocketChannel.open(hostAddress).bind(new InetSocketAddress((int)System.currentTimeMillis() % 1000));
+        SocketChannel client = SocketChannel.open();
+//        SocketChannel client = SocketChannel.open(hostAddress);
+        //client.socket().setReuseAddress(true);
+        //client.socket().bind(new InetSocketAddress("localhost",9090));
+        client.bind(new InetSocketAddress("localhost",9090));
+        client.connect(new InetSocketAddress("localhost",8080));
 
 
         System.out.println("Client... started");
