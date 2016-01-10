@@ -16,7 +16,7 @@ import java.util.Map;
  * Created by rpidanny on 1/10/16.
  */
 public class NioSocket {
-    private Map<SocketChannel,List> dataMapper;
+    private Map<SocketChannel,List> dataMapper = null;
     private Selector selector;
 
     public NioSocket(){
@@ -43,7 +43,7 @@ public class NioSocket {
             }
         };
         new Thread(server).start();
-        new Thread(client, "client-A").start();
+        //new Thread(client, "client-A").start();
 
     }
 
@@ -57,7 +57,10 @@ public class NioSocket {
             serverChannel.register(this.selector, SelectionKey.OP_ACCEPT);
             System.out.println("Server Started!! at port 8080" );
 
+            //Thread.sleep(10000);
+            System.out.println("After Delay");
             while (true){
+
                 this.selector.select();
 
                 Iterator keys = this.selector.selectedKeys().iterator();
@@ -67,7 +70,7 @@ public class NioSocket {
                     //System.out.println(key);
                     keys.remove();
 
-                    if(!key.isAcceptable()){
+                    if(key.isAcceptable()){
                         System.out.println("Accepted");
                         this.accept(key);
                     }else if (key.isReadable()){
@@ -80,21 +83,30 @@ public class NioSocket {
             }
         }catch (IOException e){
             System.out.print(e);
+        }catch (Exception e){
+            System.out.print(e);
         }
 
 
     }
 
-    public void accept(SelectionKey key)throws IOException{
-        ServerSocketChannel serverChannel = (ServerSocketChannel)key.channel();
-        java.nio.channels.SocketChannel channel = serverChannel.accept();
-        channel.configureBlocking(false);
-        Socket socket = channel.socket();
-        SocketAddress remoteAddr = socket.getRemoteSocketAddress();
-        System.out.println("Connected to "+remoteAddr);
+    public void accept(SelectionKey key){
+        try {
+            ServerSocketChannel serverChannel = (ServerSocketChannel)key.channel();
+            java.nio.channels.SocketChannel channel = serverChannel.accept();
+            channel.configureBlocking(false);
+            Socket socket = channel.socket();
+            SocketAddress remoteAddr = socket.getRemoteSocketAddress();
+            System.out.println("Connected to "+remoteAddr);
+            byte [] message = new String("Welcome").getBytes();
+            ByteBuffer buffer = ByteBuffer.wrap(message);
+            channel.write(buffer);
+            //this.dataMapper.put(channel,new ArrayList());
+            channel.register(selector,SelectionKey.OP_READ);
+        }catch (IOException e){
+            System.out.println("Crashed here");
+        }
 
-        this.dataMapper.put(channel,new ArrayList());
-        channel.register(selector,SelectionKey.OP_READ);
     }
 
     public void read(SelectionKey key)throws IOException{
@@ -104,7 +116,7 @@ public class NioSocket {
         numRead = channel.read(buffer);
         System.out.print("Inside Read Function");
         if(numRead == -1){
-            this.dataMapper.remove(channel);
+            //this.dataMapper.remove(channel);
             Socket socket = channel.socket();
             SocketAddress remoteAddr = socket.getRemoteSocketAddress();
             System.out.println("Connection Closed by Client "+remoteAddr);

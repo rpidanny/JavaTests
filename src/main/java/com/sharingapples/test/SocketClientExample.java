@@ -28,7 +28,7 @@ public class SocketClientExample {
             byte [] message = new String(messages [i]).getBytes();
             ByteBuffer buffer = ByteBuffer.wrap(message);
             client.write(buffer);
-            System.out.println(messages [i]);
+            //System.out.println(messages [i]);
             buffer.clear();
             Thread.sleep(5000);
         }

@@ -59,8 +59,8 @@ public class SocketServerTest extends Thread {
                 //userCount++;
                 System.out.print(socket.getInetAddress()+" Connected!");
 
-                while (socket.isConnected()){
-
+                while (!socket.isOutputShutdown()){
+                    //dataOutputStream.writeUTF("PING");
                 }
                 System.out.print(socket.getInetAddress()+" Disconnected!");
 
