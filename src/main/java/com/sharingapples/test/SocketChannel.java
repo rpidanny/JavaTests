@@ -33,7 +33,7 @@ public class SocketChannel {
       while (it.hasNext()){
         SelectionKey key = (SelectionKey)it.next();
         if((key.readyOps() & SelectionKey.OP_ACCEPT)== SelectionKey.OP_ACCEPT){
-        ServerSocketChannel ssc = (ServerSocketChannel)key.cancel();
+          //ServerSocketChannel ssc = (ServerSocketChannel)key.cancel();
           //SocketChannel sc = ssc.accept();
           //sc.con
         }
