@@ -57,12 +57,14 @@ public class SocketServerTest extends Thread {
 
                 dataOutputStream.writeUTF("Welcome");
                 //userCount++;
-                System.out.print(socket.getInetAddress()+" Connected!");
+                //System.out.print("Local Socket Address : "+socket.getLocalSocketAddress());
+                //System.out.print("Channel : "+socket.getChannel());
+                System.out.println("Remote Socket Address : "+socket.getRemoteSocketAddress());
 
                 while (!socket.isOutputShutdown()){
                     //dataOutputStream.writeUTF("PING");
                 }
-                System.out.print(socket.getInetAddress()+" Disconnected!");
+                System.out.print(socket.getLocalSocketAddress()+" Disconnected!");
 
 
 

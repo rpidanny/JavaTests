@@ -22,7 +22,7 @@ public class NioSocket {
     }
 
     public static void main(String ... Args){
-        final NioSocket nio = new NioSocket(false);
+        final NioSocket nio = new NioSocket(true);
         Runnable server = new Runnable() {
             public void run() {
                 nio.startServer();
@@ -34,8 +34,8 @@ public class NioSocket {
         while (true){
             try {
                 Thread.sleep(1000);
-                nio.broadcast("Ping!!\n");
-                System.out.println("User Count is : "+nio.getUserCount());
+                //nio.broadcast("Ping!!\n");
+                //System.out.println("User Count is : "+nio.getUserCount());
             }catch (Exception e){
                 System.out.println("Error in delay of main thread!!");
             }
@@ -96,7 +96,7 @@ public class NioSocket {
             channel.configureBlocking(false);
             Socket socket = channel.socket();
             SocketAddress remoteAddr = socket.getRemoteSocketAddress();
-            if (debugFlag)
+            //if (debugFlag)
                 System.out.println("Connected to "+remoteAddr);
             byte [] message = new String("Welcome").getBytes();
             ByteBuffer buffer = ByteBuffer.wrap(message);
@@ -114,8 +114,7 @@ public class NioSocket {
         ByteBuffer buffer = ByteBuffer.allocate(1024);
         int numRead =-1;
         numRead = channel.read(buffer);
-        if (debugFlag)
-            System.out.print("Inside Read Function");
+
         if(numRead == -1){
             this.dataMapper.remove(channel);
             Socket socket = channel.socket();
