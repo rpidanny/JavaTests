@@ -45,15 +45,7 @@ public class NioSocket {
         while (true){
             try {
                 Thread.sleep(5000);
-                //System.out.println(nio.getDataMapper());
-
-                for(Map.Entry<SocketChannel, List> entry:nio.getDataMapper().entrySet()) {
-                    byte [] message = new String("Echo").getBytes();
-                    ByteBuffer buffer = ByteBuffer.wrap(message);
-                    //System.out.println("Key : "+entry.getKey().getClass().getName());
-                    //System.out.println("Key : "+entry.getValue().getClass().getName());
-                    entry.getKey().write(buffer);
-                }
+                nio.broadcast("Ping!!/n");
             }catch (Exception e){
                 System.out.println("Error in delay of main thread!!");
             }
@@ -73,7 +65,7 @@ public class NioSocket {
             System.out.println("Server Started!! at port 8080" );
 
             //Thread.sleep(10000);
-            System.out.println("After Delay");
+            //System.out.println("After Delay");
             while (true){
 
                 this.selector.select();
@@ -143,5 +135,19 @@ public class NioSocket {
         byte[] data =new byte[numRead];
         System.arraycopy(buffer.array(),0,data,0,numRead);
         System.out.println("Got : "+ new String(data));
+    }
+
+    public void broadcast(String s){
+        try {
+            for(Map.Entry<SocketChannel, List> entry:this.dataMapper.entrySet()) {
+                byte [] message = s.getBytes();
+                ByteBuffer buffer = ByteBuffer.wrap(message);
+                //System.out.println("Key : "+entry.getKey().getClass().getName());
+                //System.out.println("Key : "+entry.getValue().getClass().getName());
+                entry.getKey().write(buffer);
+            }
+        }catch (IOException e){
+            System.out.println(e);
+        }
     }
 }
