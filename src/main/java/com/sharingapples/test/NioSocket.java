@@ -22,7 +22,7 @@ public class NioSocket {
     }
 
     public static void main(String ... Args){
-        final NioSocket nio = new NioSocket(true);
+        final NioSocket nio = new NioSocket(false);
 
         Runnable server = new Runnable() {
             public void run() {
@@ -33,30 +33,23 @@ public class NioSocket {
         Runnable client = new Runnable() {
             //@Override
             public void run() {
-                try {
                     new SocketClientExample().startClient();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
             }
         };
         new Thread(server).start();
-        try {
+        /*try {
             Thread.sleep(1000);
             new Thread(client, "client-A").start();
         }catch (Exception e){
             System.out.println(e);
-        }
+        }*/
 
         while (true){
             try {
-                Thread.sleep(1000);
+                Thread.sleep(10);
                 //nio.broadcast("Ping!!\n");
-                //System.out.println("User Count is : "+nio.getUserCount());
-                //new Thread(client, "client-A").start();
+                System.out.println("User Count is : "+nio.getUserCount());
+                new Thread(client).start();
             }catch (Exception e){
                 System.out.println("Error in delay of main thread!!");
             }

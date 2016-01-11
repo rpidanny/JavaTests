@@ -6,7 +6,7 @@ package com.sharingapples.test;
 public class RandomNumberGenerator {
 
     public int generate(){
-        return (int)System.nanoTime()%1000;
+        return (int)System.nanoTime()%10000;
     }
     public static void main(String ... Args){
         for (int i=0;i<100;i++){
